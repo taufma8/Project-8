@@ -8,6 +8,7 @@ const app = express();
 
 //Using third party middleware
 const bodyParser = require('body-parser');
+
 //Setting up middleware
 app.use(bodyParser.urlencoded({ extended: false}));
 
@@ -18,27 +19,6 @@ app.set('view engine', 'pug');
 //Using a static route and the express.static method to serve the static files located in the public folder.
 app.use('/static', express.static('public'));
 
-(async () => {
-  //sync all models and create tables that do not exist in the database. 
-  //accepts an object with a force parameter that lets you control the database synchronization.
-  //force: true--drop a table that exists, each time you start your app, and recreate it from the model definition.
-  await db.sequelize.sync({ force: true });
-
-  try {
-
-  } catch (error) {
-    // console.error('Error connecting to the database: ', error);
-    //If the error is SequelizeValidationError, map over the error item(s) and return an array holding any error messages.
-        if (error.name === 'SequelizeValidationError') {
-            const errors = error.errors.map(err => err.message);
-            console.error('Validation errors: ', errors);
-    //In the else block, use a throw statement to rethrow other types of errors caught by catch.
-        } else {
-            throw error;
-        } 
-    }
-})();
-
 //Adding routes and sending strings to the client.
 //Merges the data with the templates to surf dynamic pages.
 //Home route should redirect to the /books route.
@@ -47,33 +27,36 @@ app.get('/', (req, res, next) => {
 });
 
 //Shows the full list of books.
-app.get('/books', (req, res, next) => {
-    res.render('index', {books})
+app.get('/books', async (req, res, next) => {
+    let books = await Book.findAll({});
+    res.render('index', {books});
 });
 
+
 //Shows the create new book form.
-app.get('/books/new', (req, res, next) => {
-    res.render('/db/models/new');
+app.get('/books/new', async (req, res, next) => {
+    res.render('new-book', { book: Book.build(), title: 'New Book' });
 });
 
 //Posts a new book to the database.
-app.post('/books/new', (req, res, next) => {
-    res.render('/db/models/new');
+app.post('/books/new', async (req, res, next) => {
+    res.render('/new');
 });
 
 //Shows book detail form.
-app.get('/books/:id', (req, res, next) => {
-    res.render('/db/models/:id');
+app.get('/books/:id', async (req, res, next) => {
+    const bookById = await Book.findOne();
+    res.render('update-book');
 });
 
 //Updates book info in the database.
-app.post('/books/:id', (req, res, next) => {
-    res.render('/db/models/:id');
+app.post('/books/:id', async (req, res, next) => {
+    res.render('books/:id');
 });
 
 //Deletes a book. 
-app.post('/books/:id/delete', (req, res, next) => {
-    res.render('/db/models/:id/delete');
+app.post('/books/:id/delete', async (req, res, next) => {
+    res.render('books/:id');
 });
 
 app.listen(3000, () => {
@@ -92,17 +75,17 @@ app.listen(3000, () => {
 //   });
 
 // //Define the async immediately invoked function expression (IIFE) function.
-// // (async () => {
-// //Inside the try block, log a "success" message to the console. 
-// //   try {
-// //to test that the connection is OK and you can connect to the database.
-//     // await sequelize.authenticate();
-//     // console.log('Connection to the database successful!');
-// //In the catch block, use console.error() to print an 'error' message displaying the error.
-// //   } catch (error) {
-// //     console.error('Error connecting to the database: ', error);
-// //   }
-// // })();
+// (async () => {
+// // Inside the try block, log a "success" message to the console. 
+//   try {
+// // to test that the connection is OK and you can connect to the database.
+//     await sequelize.authenticate();
+//     console.log('Connection to the database successful!');
+// // In the catch block, use console.error() to print an 'error' message displaying the error.
+//   } catch (error) {
+//     console.error('Error connecting to the database: ', error);
+//   }
+// })();
 
 // //Book model
 // //extending from Sequelize.Model, which is part of Sequelize's API for model definition.

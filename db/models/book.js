@@ -3,11 +3,11 @@ const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
   class Book extends Sequelize.Model {}
   Book.init({
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,    //to generate the primary key column using the property name defined in the model
-        autoIncrement: true, //generates an ID that increments by 1 for each new entry.
-    },
+    // id: {
+    //     type: Sequelize.INTEGER,
+    //     primaryKey: true,    //to generate the primary key column using the property name defined in the model
+    //     autoIncrement: true, //generates an ID that increments by 1 for each new entry.
+    // },
     title: {
         type: Sequelize.STRING,
         allowNull: false, //disallow null.
