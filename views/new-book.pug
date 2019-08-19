@@ -1,24 +1,36 @@
-extend layout
+
+extends layout
 
 block content
+  h1= title
+  
+  include errors
+  
+  form(action="/books", method="post")
+    include form
 
-  title= title
+//- extend layout
 
-  h1 New Book
-  form
-    p
-      label(for='title') Title
-      input#title(name='title' type='text')
-    p
-      label(for='author') Author
-      input#author(name='author' type='text')
-    p
-      label(for='genre') Genre
-      input#genre(name='genre' type='text')
-    p
-      label(for='year') Year
-      input#year(name='year' type='text')
-    p
-      a(class="button" href="/books") Create New Book
-    p
-      a.button(href='/') Cancel
+//- block content
+
+//-   title= title
+
+//-   h1 New Book
+//-   form
+//-     p
+//-       label(for='title') Title
+//-       input#title(name='title' type='text')
+//-     p
+//-       label(for='author') Author
+//-       input#author(name='author' type='text')
+//-     p
+//-       label(for='genre') Genre
+//-       input#genre(name='genre' type='text')
+//-     p
+//-       label(for='year') Year
+//-       input#year(name='year' type='text')
+//-     p
+//-       a(class="button" href="/books") Create New Book
+//-     p
+//-       a.button(href='/') Cancel
+

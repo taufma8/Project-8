@@ -1,67 +1,134 @@
-//Setting up to use the db folder we created.
-const db = require('./db');
-const { Book } = db.models;
-
-//Setting up express
 const express = require('express');
+const path = require('path');
+// const favicon = require('serve-favicon');
+// const logger = require('morgan');
+// const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+// const connect = require('connect')
+// const methodOverride = require('method-override')
+
+const routes = require('./routes/index');
+const books = require('./routes/books');
+
 const app = express();
 
-//Using third party middleware
-const bodyParser = require('body-parser');
-
-//Setting up middleware
-app.use(bodyParser.urlencoded({ extended: false}));
-
-//Setting up pug
-//Update code in app to use Pug
+// view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 app.set('view engine', 'pug');
 
-//Using a static route and the express.static method to serve the static files located in the public folder.
-app.use('/static', express.static('public'));
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(methodOverride('_method'));
+// app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-//Adding routes and sending strings to the client.
-//Merges the data with the templates to surf dynamic pages.
-//Home route should redirect to the /books route.
-app.get('/', (req, res, next) => {
-    res.redirect('/books')
+app.use('/', routes);
+app.use('/books', books);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-//Shows the full list of books.
-app.get('/books', async (req, res, next) => {
-    let books = await Book.findAll({});
-    res.render('index', {books});
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
 
+// app.listen(3000, () => {
+//     console.log('The application is running on localhost:3000!');
+// });
 
-//Shows the create new book form.
-app.get('/books/new', async (req, res, next) => {
-    res.render('new-book', { book: Book.build(), title: 'New Book' });
-});
+module.exports = app;
 
-//Posts a new book to the database.
-app.post('/books/new', async (req, res, next) => {
-    res.render('/new');
-});
 
-//Shows book detail form.
-app.get('/books/:id', async (req, res, next) => {
-    const bookById = await Book.findOne();
-    res.render('update-book');
-});
+// //Setting up to use the db folder we created.
+// const db = require('./db');
+// const { Book } = db.models;
 
-//Updates book info in the database.
-app.post('/books/:id', async (req, res, next) => {
-    res.render('books/:id');
-});
+// //Setting up express
+// const express = require('express');
+// const app = express();
 
-//Deletes a book. 
-app.post('/books/:id/delete', async (req, res, next) => {
-    res.render('books/:id');
-});
+// //Using third party middleware
+// const bodyParser = require('body-parser');
 
-app.listen(3000, () => {
-    console.log('The application is running on localhost:3000!');
-});
+// //Setting up middleware
+// app.use(bodyParser.urlencoded({ extended: false}));
+
+// //Setting up pug
+// //Update code in app to use Pug
+// app.set('view engine', 'pug');
+
+// //Using a static route and the express.static method to serve the static files located in the public folder.
+// app.use('/static', express.static('public'));
+
+// //Adding routes and sending strings to the client.
+// //Merges the data with the templates to surf dynamic pages.
+// //Home route should redirect to the /books route.
+// app.get('/', (req, res, next) => {
+//     res.redirect('/books')
+// });
+
+// //Shows the full list of books.
+// app.get('/books', async (req, res, next) => {
+//     let books = await Book.findAll({});
+//     res.render('index', {books});
+// });
+
+
+// //Shows the create new book form.
+// app.get('/books/new', async (req, res, next) => {
+//     res.render('new-book', { book: Book.build(), title: 'New Book' });
+// });
+
+// //Posts a new book to the database.
+// app.post('/books/new', async (req, res, next) => {
+//     res.render('/new');
+// });
+
+// //Shows book detail form.
+// app.get('/books/:id', async (req, res, next) => {
+//     const bookById = await Book.findOne();
+//     res.render('update-book');
+// });
+
+// //Updates book info in the database.
+// app.post('/books/:id', async (req, res, next) => {
+//     res.render('books/:id');
+// });
+
+// //Deletes a book. 
+// app.post('/books/:id/delete', async (req, res, next) => {
+//     res.render('books/:id');
+// });
+
+
 
 // //Include Sequelize in your program. 
 // const Sequelize = require('sequelize');

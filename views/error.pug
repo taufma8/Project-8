@@ -1,8 +1,15 @@
-extends layout
-block content
+if(errors)
+  h2.errors Ooops an error occured!
+  ul.errors
+    each error in errors
+      li
+        =error.message
+
+//- extends layout
+//- block content
 
 
-  title Page Not Found
-  link(rel='stylesheet' href='../public/stylesheets/style.css')
-h1 Server Error
-p Sorry! There was an unexpected error on the server.
+//-   title Page Not Found
+//-   link(rel='stylesheet' href='../public/stylesheets/style.css')
+//- h1 Server Error
+//- p Sorry! There was an unexpected error on the server.
